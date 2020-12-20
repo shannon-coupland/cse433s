@@ -25,23 +25,34 @@ const int max_expected_args = 2;
 
 double test_creds(char* user, char* pass, int username_size, int password_size, int socket) {
   printf("entered test_creds\n");
+  int result;
+  char response[BUF_SIZE];
+
   //send username
   send(socket, user, username_size, 0);
 
   //wait for server before sending password
-  char response[BUF_SIZE];
-  while (read(socket, response, sizeof(response)) == -1);
+  if ((result = read(socket, response, sizeof(response))) == -1) {
+    perror("read failed");
+    return -1;
+  } else if (result == 0) {
+    perror("server closed");
+    return -1;
+  }
   printf("%s\n", response);
 
   //send password
   clock_gettime(CLOCK_MONOTONIC, &req_before); //record time before
   send(socket, pass, password_size, 0);
-  if (read(socket, response, sizeof(response)) == -1) {
+  if ((result = read(socket, response, sizeof(response))) == -1) {
     perror("read failed");
+    return -1;
+  } else if (result == 0) {
+    perror("server closed");
     return -1;
   }
   clock_gettime(CLOCK_MONOTONIC, &req_after); //record time after
-  printf("received response from server\n");
+  printf("%s\n", response);
 
   return (req_after.tv_nsec - req_before.tv_nsec);
 }
@@ -98,5 +109,4 @@ int main(int argc, char const *argv[]) {
 
   close(sock);
   return 0;
-
 }
