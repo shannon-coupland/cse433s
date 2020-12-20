@@ -16,15 +16,19 @@
 #define jason_ip "192.168.0.190"
 #define shan_ip "192.168.0.161"
 #define shan_linux_ip "128.252.167.161"
+<<<<<<< HEAD
 
 char* ip = shan_linux_ip;
+=======
+char* ip = jason_ip;
+>>>>>>> b1a3c4f717ddbd5a2016150100d733167306ec6f
 
+#define NUM_ITERS 1000
 struct timespec req_before, req_after;
-
 const int max_expected_args = 2;
 
 double test_creds(char* user, char* pass, int username_size, int password_size, int socket) {
-  printf("entered test_creds\n");
+  //printf("entered test_creds\n");
   int result;
   char response[BUF_SIZE];
 
@@ -52,7 +56,7 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
     return -1;
   }
   clock_gettime(CLOCK_MONOTONIC, &req_after); //record time after
-  printf("%s\n", response);
+  //printf("%s\n", response);
 
   return (req_after.tv_nsec - req_before.tv_nsec);
 }
@@ -86,26 +90,35 @@ int main(int argc, char const *argv[]) {
 
   printf("connected\n");
 
-
+  double test, test1 = 0, test2 = 0, test3 = 0;
   char* username = "shan";
   char* password = "shannon_password_super_secret";
 
-  //test1 (correct password)
-  double test1 = test_creds(username, password, sizeof(username), sizeof(password), sock);
-  if (test1 == -1) exit(EXIT_FAILURE);
-  printf("test1 (correct password) time (ns): %lf\n", test1);
+  for (int i = 0; i < NUM_ITERS; i++) {
+    //test1 (correct password)
+    test = test_creds(username, password, sizeof(username), sizeof(password), sock);
+    if (test == -1) exit(EXIT_FAILURE);
+    test1 += test;
 
-  //test2 (incorrect password, index 0 of 28)
-  password = "wrong_password";
-  double test2 = test_creds(username, password, sizeof(username), sizeof(password), sock);
-  if (test2 == -1) exit(EXIT_FAILURE);
-  printf("test2 (incorrect password, index 0) time (ns): %lf\n", test2);
+    //test2 (incorrect password, index 0 of 28)
+    password = "wrong_password";
+    test = test_creds(username, password, sizeof(username), sizeof(password), sock);
+    if (test == -1) exit(EXIT_FAILURE);
+    test2 += test;
 
-  //test3 (incorrect password, index 22 of 28)
-  password = "shannon_password_super_wrong_password";
-  double test3 = test_creds(username, password, sizeof(username), sizeof(password), sock);
-  if (test3 == -1) exit(EXIT_FAILURE);
-  printf("test3 (incorrect password, index 22 of 28) time (ns): %lf\n", test3);
+    //test3 (incorrect password, index 22 of 28)
+    password = "shannon_password_super_wrong_password";
+    test = test_creds(username, password, sizeof(username), sizeof(password), sock);
+    if (test == -1) exit(EXIT_FAILURE);
+    test3 += test;
+  }
+
+  test1 = test1 / NUM_ITERS;
+  test2 = test2 / NUM_ITERS;
+  test3 = test3 / NUM_ITERS;
+  printf("test1 (correct password) average time (ns): %lf\n", test1);
+  printf("test2 (incorrect password, index 0) average time (ns): %lf\n", test2);
+  printf("test3 (incorrect password, index 22 of 28) average time (ns): %lf\n", test3);
 
   close(sock);
   return 0;
