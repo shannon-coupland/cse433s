@@ -22,6 +22,20 @@
 const char* CREDS[CREDS_SIZE][2] = {{"shan", "shannon_password_super_secret"},
                                     {"jason", "jason_password_super_secret"}};
 
+int string_compare(char* str1, char* str2, int len1, int len2) {
+    int i = 0;
+    int min;
+    if (len1 < len2) min = len1;
+    else min = len2;
+
+    while (i < min) {
+        if (str1[i] != str2[i]) {
+
+        }
+    }
+
+    return 0;
+}
 
 int get_input(char* buf, int buf_size, int socket) {
     printf("entered get_input, about to read\n");
@@ -102,7 +116,7 @@ int main(int argc, char const* argv[]) {
             exit (EXIT_FAILURE);
         }
 
-        send (new_socket, GOT_USER, sizeof(got_user), 0);
+        send (new_socket, GOT_USER, sizeof(GOT_USER), 0);
 
         if (get_input(password, sizeof(password), new_socket) == -1) {
             printf("get_input returned -1 - exiting program\n");

@@ -17,7 +17,7 @@
 #define shan_ip "192.168.0.161"
 #define shan_linux_ip "128.252.167.161"
 
-char* ip = jason_ip;
+char* ip = shan_linux_ip;
 
 struct timespec req_before, req_after;
 
