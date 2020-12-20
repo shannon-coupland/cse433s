@@ -17,7 +17,7 @@
 #define shan_ip "192.168.0.161"
 #define shan_linux_ip "128.252.167.161"
 
-char* ip = shan_linux_ip;
+char* ip = jason_ip;
 
 struct timespec req_before, req_after;
 
@@ -25,21 +25,23 @@ const int max_expected_args = 2;
 
 double test_creds(char* user, char* pass, int username_size, int password_size, int socket) {
   printf("entered test_creds\n");
+  //send username
   send(socket, user, username_size, 0);
-  printf("sent username\n");
-  clock_gettime(CLOCK_MONOTONIC, &req_before);
-  send(socket, pass, password_size, 0);
-  printf("sent password\n");
 
+  //wait for server before sending password
   char response[BUF_SIZE];
+  while (read(socket, response, sizeof(response)) == -1);
+  printf("%s\n", response);
+
+  //send password
+  clock_gettime(CLOCK_MONOTONIC, &req_before); //record time before
+  send(socket, pass, password_size, 0);
   if (read(socket, response, sizeof(response)) == -1) {
     perror("read failed");
     return -1;
   }
-
+  clock_gettime(CLOCK_MONOTONIC, &req_after); //record time after
   printf("received response from server\n");
-
-  clock_gettime(CLOCK_MONOTONIC, &req_after);
 
   return (req_after.tv_nsec - req_before.tv_nsec);
 }

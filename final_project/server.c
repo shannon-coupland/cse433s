@@ -33,6 +33,7 @@ int get_input(char* buf, int buf_size, int socket) {
     perror("client closed");
     return -1;
   }
+  printf("exiting get_input\n");
 
   buf[buf_size - 1] = '\0';
   return 0;
