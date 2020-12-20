@@ -23,7 +23,7 @@ const char* CREDS[CREDS_SIZE][2] = {{"shan", "shannon_password_super_secret"},
 
 
 int get_input(char* buf, int buf_size, int socket) {
-  printf("entered check_creds");
+  printf("entered get_input\n");
   int result;
 
   if ((result = read(socket, buf, buf_size)) < 0) {
@@ -39,7 +39,7 @@ int get_input(char* buf, int buf_size, int socket) {
 }
 
 int check_creds(char* username, char* password, int socket) {
-  printf("entered check_creds");
+  printf("entered check_creds\n");
   for (int i = 0; i < CREDS_SIZE; i++) {
     if (!strcmp(CREDS[i][0], username)) {
       if (!strcmp(CREDS[i][1], password)) {
@@ -88,6 +88,7 @@ int main(int argc, char const* argv[]) {
   }
 
   while(1) {
+    printf("entered while loop\n");
     char username[BUF_SIZE];
     char password[BUF_SIZE];
 

@@ -15,21 +15,29 @@
 #define PORT 39393
 #define jason_ip "192.168.0.190"
 #define shan_ip "192.168.0.161"
+#define shan_linux_ip "128.252.167.161"
+
+char* ip = shan_linux_ip;
 
 struct timespec req_before, req_after;
 
 const int max_expected_args = 2;
 
 double test_creds(char* user, char* pass, int username_size, int password_size, int socket) {
+  printf("entered test_creds\n");
   send(socket, user, username_size, 0);
+  printf("sent username\n");
   clock_gettime(CLOCK_MONOTONIC, &req_before);
   send(socket, pass, password_size, 0);
+  printf("sent password\n");
 
   char response[BUF_SIZE];
   if (read(socket, response, sizeof(response)) == -1) {
     perror("read failed");
     return -1;
   }
+
+  printf("received response from server\n");
 
   clock_gettime(CLOCK_MONOTONIC, &req_after);
 
@@ -53,7 +61,7 @@ int main(int argc, char const *argv[]) {
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(PORT);
 
-  if(inet_pton(AF_INET, jason_ip, &serv_addr.sin_addr) <= 0) {
+  if(inet_pton(AF_INET, ip, &serv_addr.sin_addr) <= 0) {
 	  perror("Error in init_pton");
 	  exit(EXIT_FAILURE);
   }
