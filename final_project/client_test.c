@@ -18,7 +18,7 @@
 #define shan_linux_ip "128.252.167.161"
 char* ip = jason_ip;
 
-#define NUM_ITERS 1000
+#define NUM_ITERS 10000
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
 
