@@ -19,7 +19,7 @@
 
 char* ip = shan_linux_ip;
 
-#define NUM_ITERS 10000
+#define NUM_ITERS 1000
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
 
