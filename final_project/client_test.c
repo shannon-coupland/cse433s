@@ -24,18 +24,22 @@ struct timespec req_before, req_after;
 const int max_expected_args = 2;
 
 double test_creds(char* user, char* pass, int username_size, int password_size, int socket) {
-  printf("entered test_creds\n");
-  send(socket, user, username_size, 0);
-  printf("sent username\n");
-  clock_gettime(CLOCK_MONOTONIC, &req_before);
-  send(socket, pass, password_size, 0);
-  printf("sent password\n");
+    printf("entered test_creds\n");
+    send(socket, user, username_size, 0);
+    printf("sent username\n");
+    clock_gettime(CLOCK_MONOTONIC, &req_before);
+    send(socket, pass, password_size, 0);
+    printf("sent password\n");
 
-  char response[BUF_SIZE];
-  if (read(socket, response, sizeof(response)) == -1) {
-    perror("read failed");
-    return -1;
-  }
+    int result;
+    char response[BUF_SIZE];
+    if ((result = read(socket, response, sizeof(response))) == -1) {
+        perror("read failed");
+        return -1;
+    } else if (result == 0) {
+        perror ("server closed");
+        return -1;
+    }
 
   printf("received response from server\n");
 
