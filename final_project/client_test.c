@@ -19,7 +19,7 @@
 
 char* ip = shan_linux_ip;
 
-#define NUM_ITERS 1000
+#define NUM_ITERS 10000
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
 
@@ -39,7 +39,7 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
     perror("server closed");
     return -1;
   }
-  printf("%s\n", response);
+  //printf("%s\n", response);
 
   //send password
   clock_gettime(CLOCK_MONOTONIC, &req_before); //record time before

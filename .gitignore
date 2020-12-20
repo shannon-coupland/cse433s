@@ -1,4 +1,3 @@
-
-studio_1/topic1_task3/.cbc_marbles.bin.icloud
-*.icloud
-studio_5/.DS_Store
+*
+!*.c
+!Makefile
