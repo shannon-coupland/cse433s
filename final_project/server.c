@@ -14,12 +14,12 @@
 #define PORT 39393
 
 #define GOT_USER "Received username."
-#define SUCCESS "Successfully logged in!"
-#define NO_USER "Username does not exist."
-#define BAD_PASS "Wrong password - try again."
+#define SUCCESS  "Successfully logged in!"
+#define NO_USER  "Username does not exist."
+#define BAD_PASS "Wrong password, stupid."
 
 #define CREDS_SIZE 2
-const char* CREDS[CREDS_SIZE][2] = {{"shan", "shannon_password_super_secret"},
+char* CREDS[CREDS_SIZE][2] = {{"shan", "shannon_password_super_secret"},
                                     {"jason", "jason_password_super_secret"}};
 
 int string_compare(char* str1, char* str2, int len1, int len2) {
@@ -30,9 +30,12 @@ int string_compare(char* str1, char* str2, int len1, int len2) {
 
     while (i < min) {
         if (str1[i] != str2[i]) {
-
+            return -1;
         }
+        i++;
     }
+
+    if (len1 != len2) return -1;
 
     return 0;
 }
@@ -58,8 +61,8 @@ int get_input(char* buf, int buf_size, int socket) {
 int check_creds(char* username, char* password, int socket) {
     //printf("entered check_creds\n");
     for (int i = 0; i < CREDS_SIZE; i++) {
-        if (!strcmp(CREDS[i][0], username)) {
-            if (!strcmp(CREDS[i][1], password)) {
+        if (!string_compare(CREDS[i][0], username, strlen(CREDS[i][0]), strlen(username))) {
+            if (!string_compare(CREDS[i][1], password, strlen(CREDS[i][1]), strlen(password))) {
                 send(socket, SUCCESS, sizeof(SUCCESS), 0);
             } else {
                 send(socket, BAD_PASS, sizeof(BAD_PASS), 0);
