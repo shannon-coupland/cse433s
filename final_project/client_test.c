@@ -13,12 +13,12 @@
 
 #define BUF_SIZE 256
 #define PORT 39393
-#define jason_ip "192.168.0.190"
+#define jason_ip "192.168.122.1"
 #define shan_ip "192.168.1.46"
 #define shan_linux_ip "128.252.167.161"
 #define shan_lab_ip "192.168.122.1"
 
-char* ip = shan_lab_ip;
+char* ip = jason_ip;
 
 #define NUM_ITERS 50
 #define NUM_CHARS 27
