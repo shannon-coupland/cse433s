@@ -59,19 +59,13 @@ int get_input(char* buf, int buf_size, int socket) {
     return 0;
 }
 
-int check_creds(char* username, char* password, int socket) {
+int check_creds(int user_index, char* password, int socket) {
     //printf("entered check_creds\n");
-    for (int i = 0; i < CREDS_SIZE; i++) {
-        if (!string_compare(CREDS[i][0], username, strlen(CREDS[i][0]), strlen(username))) {
-             if (string_compare(CREDS[i][1], password, strlen(CREDS[i][1]), strlen(password)) == 0) {
-                send(socket, SUCCESS, sizeof(SUCCESS), 0);
-            } else {
-                send(socket, BAD_PASS, sizeof(BAD_PASS), 0);
-            }
-        return 0;
-        }
+    if (string_compare(CREDS[user_index][1], password, strlen(CREDS[user_index][1]), strlen(password)) == 0) {
+        send(socket, SUCCESS, sizeof(SUCCESS), 0);
+    } else {
+        send(socket, BAD_PASS, sizeof(BAD_PASS), 0);
     }
-    send(socket, NO_USER, sizeof(NO_USER), 0);
     //printf("about to exit check_creds\n");
     return 0;
 }
@@ -109,25 +103,35 @@ int main(int argc, char const* argv[]) {
         printf("New connection to socket\n");
      }
 
+    char username[BUF_SIZE];
+    char password[BUF_SIZE];
+    int user_index;
+    bool found;
     while(1) {
-        //printf("entered while loop\n");
-        char username[BUF_SIZE];
-        char password[BUF_SIZE];
-
-
         if (get_input(username, sizeof(username), new_socket) == -1) {
             printf("get_input returned -1 - exiting program\n");
             exit (EXIT_FAILURE);
         }
 
-        send (new_socket, GOT_USER, sizeof(GOT_USER), 0);
+        found = false;
+        for (int i = 0; i < CREDS_SIZE; i++) {
+            if (!string_compare(CREDS[i][0], username, strlen(CREDS[i][0]), strlen(username))) {
+                user_index = i;
+                found = true;
+            }
+        }
+        if (!found) {
+            send(socket, NO_USER, sizeof(NO_USER), 0);
+        } else {
+            send (new_socket, GOT_USER, sizeof(GOT_USER), 0);
+        }
 
         if (get_input(password, sizeof(password), new_socket) == -1) {
             printf("get_input returned -1 - exiting program\n");
             exit(EXIT_FAILURE);
         }
 
-        check_creds(username, password, new_socket);
+        check_creds(user_index, password, new_socket);
     }
 
     return 0;
