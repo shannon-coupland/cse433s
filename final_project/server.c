@@ -47,9 +47,12 @@ int string_compare(char* str1, char* str2, int len1, int len2) {
 
 int check_creds(int user_index, char* password, int socket) {
     //printf("entered check_creds\n");
+    //printf("CREDS[user_index][1] = %s\n", CREDS[user_index][1]);
     if (string_compare(CREDS[user_index][1], password, strlen(CREDS[user_index][1]), strlen(password)) == 0) {
+        //printf("Password matched!\n");
         send(socket, SUCCESS, strlen(SUCCESS), 0);
     } else {
+        //printf("Password did not match.\n");
         send(socket, BAD_PASS, strlen(BAD_PASS), 0);
     }
     //printf("about to exit check_creds\n");
@@ -111,8 +114,10 @@ int main(int argc, char const* argv[]) {
             }
 
             if (!found) {
+                printf("Failed to find username %s.\n", username);
                 send(new_socket, NO_USER, sizeof(NO_USER), 0);
             } else {
+                printf("Found username %s\n", username);
                 send (new_socket, GOT_USER, sizeof(GOT_USER), 0);
             }
 
@@ -125,6 +130,7 @@ int main(int argc, char const* argv[]) {
                 printf("Client closed; closing server.\n");
                 exit(EXIT_SUCCESS);
             } else {
+                printf("Received password %s\n", password);
                 check_creds(user_index, password, new_socket);
             }
         }

