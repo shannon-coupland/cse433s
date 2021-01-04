@@ -61,6 +61,8 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
     ret += 1000000000;
   }
 
+  printf("%d\n", ret);
+
   return ret;
 }
 
@@ -98,8 +100,6 @@ int main(int argc, char const *argv[]) {
   char* password = "shannon_password_super_secret";
 
   for (int i = 0; i < NUM_ITERS; i++) {
-    printf("%d\n", i);
-
     //test1 (correct password)
     test = test_creds(username, password, sizeof(username), sizeof(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
