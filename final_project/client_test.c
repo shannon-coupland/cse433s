@@ -16,10 +16,12 @@
 #define jason_ip "192.168.0.190"
 #define shan_ip "192.168.1.46"
 #define shan_linux_ip "128.252.167.161"
+#define shan_lab_ip "192.168.122.1"
 
-char* ip = shan_ip;
+char* ip = shan_lab_ip;
 
 #define NUM_ITERS 1000
+
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
 
@@ -61,7 +63,7 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
     ret += 1000000000;
   }
 
-  printf("%d\n", ret);
+  //printf("ret is %lf, it should be %lf\n", ret, req_after.tv_nsec - req_before.tv_nsec);
 
   return ret;
 }
@@ -100,20 +102,22 @@ int main(int argc, char const *argv[]) {
   char* password = "shannon_password_super_secret";
 
   for (int i = 0; i < NUM_ITERS; i++) {
+    //printf("%d\n", i);
+
     //test1 (correct password)
-    test = test_creds(username, password, sizeof(username), sizeof(password), sock);
+    test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
     test1 += (test / 1000);
 
     //test2 (incorrect password, index 0 of 28)
     password = "wrong_password";
-    test = test_creds(username, password, sizeof(username), sizeof(password), sock);
+    test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
     test2 += (test / 1000);
 
     //test3 (incorrect password, index 15 of 28)
     password = "shannon_passwordz_super_wrong";
-    test = test_creds(username, password, sizeof(username), sizeof(password), sock);
+    test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
     test3 += (test / 1000);
   }

@@ -24,6 +24,7 @@ char* CREDS[CREDS_SIZE][2] = {{"shan", "shannon_password_super_secret"},
                                     {"jason", "jason_password_super_secret"}};
 
 int string_compare(char* str1, char* str2, int len1, int len2) {
+    //printf("str1 is %s, str2 is %s\n", str1, str2);
     int i = 0;
     int min;
     if (len1 < len2) min = len1;
@@ -31,14 +32,35 @@ int string_compare(char* str1, char* str2, int len1, int len2) {
 
     while (i < min) {
         if (str1[i] != str2[i]) {
+            //printf("char %c doesn't match char %c - returning\n", str1[i], str2[i]);
             return -1;
         }
+        //printf("char %c matches char %c\n", str1[i], str2[i]);
         i++;
-        //usleep(SLEEP_TIME);
+        usleep(SLEEP_TIME);
     }
 
     if (len1 != len2) return -1;
     return 0;
+}
+
+char *get_input_buf (int socket) {
+    char *buf = malloc(BUF_SIZE);
+    int result;
+
+    if ((result = read(socket, buf, BUF_SIZE)) < 0) {
+        perror("read failed");
+        //return -1;
+    } else if (result == 0) {
+        perror("client closed");
+        //return -1;
+    }
+
+    buf[BUF_SIZE - 1] = '\0';
+    printf("result of get_input_buf is %s\n", buf);
+
+    return buf;
+
 }
 
 int get_input(char* buf, int buf_size, int socket) {
@@ -103,36 +125,44 @@ int main(int argc, char const* argv[]) {
         printf("New connection to socket\n");
      }
 
-    char username[BUF_SIZE];
-    char password[BUF_SIZE];
+    //char username[BUF_SIZE];
+    //char password[BUF_SIZE];
     int user_index;
-    bool found;
-    while(1) {
-        if (get_input(username, sizeof(username), new_socket) == -1) {
-            printf("get_input returned -1 - exiting program\n");
-            exit (EXIT_FAILURE);
-        }
+    int found;
 
-        found = false;
+    while(1) {
+
+        char username[BUF_SIZE];
+        read(new_socket, username, BUF_SIZE);
+        //if (get_input(username, sizeof(username), new_socket) == -1) {
+        //    printf("get_input returned -1 - exiting program\n");
+        //    exit (EXIT_FAILURE);
+        //}
+
+        found = 0;
         for (int i = 0; i < CREDS_SIZE; i++) {
             if (!string_compare(CREDS[i][0], username, strlen(CREDS[i][0]), strlen(username))) {
                 user_index = i;
-                found = true;
+                found = 1;
             }
         }
+
         if (!found) {
-            send(socket, NO_USER, sizeof(NO_USER), 0);
+            send(new_socket, NO_USER, sizeof(NO_USER), 0);
         } else {
             send (new_socket, GOT_USER, sizeof(GOT_USER), 0);
         }
 
-        if (get_input(password, sizeof(password), new_socket) == -1) {
-            printf("get_input returned -1 - exiting program\n");
-            exit(EXIT_FAILURE);
-        }
+        char password[BUF_SIZE];
+        read(new_socket, password, BUF_SIZE);
+        //if (get_input(password, sizeof(password), new_socket) == -1) {
+        //    printf("get_input returned -1 - exiting program\n");
+        //    exit(EXIT_FAILURE);
+        //}
 
         check_creds(user_index, password, new_socket);
     }
 
     return 0;
 }
+
