@@ -21,9 +21,9 @@
 char* ip = shan_lab_ip;
 
 char* USERNAME = "shan";
-char* PASSWORD = "shannon_super_secret_password";
+char* PASSWORD = "shannon_password_super_secret";
 
-#define NUM_ITERS 10
+#define NUM_ITERS 500
 #define NUM_CHARS 27
 #define BUFFER_PERCENT 0.9
 
@@ -139,7 +139,6 @@ int main(int argc, char const *argv[]) {
           threshold = diff;
         }
     }
-    threshold /= (NUM_TESTS - 1);
     threshold *= BUFFER_PERCENT;
 
     close(sock);
