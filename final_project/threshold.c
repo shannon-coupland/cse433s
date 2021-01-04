@@ -131,8 +131,12 @@ int main(int argc, char const *argv[]) {
 
     printf("About to calculate threshold\n");
     double threshold = 0;
-    for (int i = 0; i < NUM_TESTS - 1; i++) {
-        threshold += tests[i+1] - tests[i];
+    double diff;
+    for (int i = 0; i < PASSWORD_SIZE - 1; i++) {
+        diff = tests[i+1] - tests[i];
+        if (threshold == 0 || diff < threshold) {
+          threshold = diff;
+        }
     }
     threshold /= (NUM_TESTS - 1);
     threshold *= BUFFER_PERCENT;
