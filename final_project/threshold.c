@@ -112,7 +112,8 @@ int main(int argc, char const *argv[]) {
     for (int i = 0; i < NUM_TESTS; i++) {
         //printf("i = %d\n", i);
         strncpy(guess, PASSWORD, i+1);
-        guess[i+1] = '\0';
+        guess[i+1] = '|';
+        guess[i+2] = '\0';
         printf("\n");
         printf("guessing password %s\n", guess);
         tests[i] = 0;
@@ -132,7 +133,7 @@ int main(int argc, char const *argv[]) {
     printf("About to calculate threshold\n");
     double threshold = 0;
     double diff;
-    for (int i = 0; i < PASSWORD_SIZE - 1; i++) {
+    for (int i = 0; i < NUM_TESTS - 1; i++) {
         diff = tests[i+1] - tests[i];
         if (threshold == 0 || diff < threshold) {
           threshold = diff;
