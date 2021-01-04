@@ -14,10 +14,10 @@
 #define BUF_SIZE 256
 #define PORT 39393
 #define jason_ip "192.168.0.190"
-#define shan_ip "192.168.0.161"
+#define shan_ip "192.168.1.46"
 #define shan_linux_ip "128.252.167.161"
 
-char* ip = jason_ip;
+char* ip = shan_ip;
 
 #define NUM_ITERS 1000
 struct timespec req_before, req_after;
