@@ -18,7 +18,7 @@
 #define NO_USER  "Username does not exist."
 #define BAD_PASS "Wrong password, stupid."
 
-#define SLEEP_TIME 1000
+#define SLEEP_TIME 1
 #define CREDS_SIZE 2
 char* CREDS[CREDS_SIZE][2] = {{"shan", "shannon_password_super_secret"},
                                     {"jason", "jason_password_super_secret"}};
@@ -84,9 +84,9 @@ int get_input(char* buf, int buf_size, int socket) {
 int check_creds(int user_index, char* password, int socket) {
     //printf("entered check_creds\n");
     if (string_compare(CREDS[user_index][1], password, strlen(CREDS[user_index][1]), strlen(password)) == 0) {
-        send(socket, SUCCESS, sizeof(SUCCESS), 0);
+        send(socket, SUCCESS, strlen(SUCCESS), 0);
     } else {
-        send(socket, BAD_PASS, sizeof(BAD_PASS), 0);
+        send(socket, BAD_PASS, strlen(BAD_PASS), 0);
     }
     //printf("about to exit check_creds\n");
     return 0;

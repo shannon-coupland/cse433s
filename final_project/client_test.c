@@ -20,7 +20,7 @@
 
 char* ip = shan_lab_ip;
 
-#define NUM_ITERS 1000
+#define NUM_ITERS 50
 
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
@@ -63,8 +63,6 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
     ret += 1000000000;
   }
 
-  //printf("ret is %lf, it should be %lf\n", ret, req_after.tv_nsec - req_before.tv_nsec);
-
   return ret;
 }
 
@@ -100,13 +98,15 @@ int main(int argc, char const *argv[]) {
   double test, test1 = 0, test2 = 0, test3 = 0, test4 = 0, test5 = 0, test6 = 0,
                test7 = 0, test8 = 0, test9 = 0, test10 = 0, test11 = 0,
                test12 = 0, test13 = 0, test14 = 0, test15 = 0;
+
   char* username = "shan";
-  char* password = "shannon_password_super_secret";
+  char* password;
 
   for (int i = 0; i < NUM_ITERS; i++) {
     //printf("%d\n", i);
 
     //test1 (correct)
+    password = "shannon_password_super_secret";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
     test1 += (test / 1000);
@@ -121,79 +121,79 @@ int main(int argc, char const *argv[]) {
     password = "shannon_password_super_szzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test3 += (test3 / 1000);
+    test3 += (test / 1000);
 
     //test4 (incorrect, index 22 of 28)
     password = "shannon_password_superzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test4 += (test4 / 1000);
+    test4 += (test / 1000);
 
     //test5 (incorrect, index 20 of 28)
     password = "shannon_password_supzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test5 += (test5 / 1000);
+    test5 += (test / 1000);
 
     //test6 (incorrect, index 18 of 28)
     password = "shannon_password_szzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test6 += (test6 / 1000);
+    test6 += (test / 1000);
 
     //test7 (incorrect, index 16 of 28)
     password = "shannon_passwordzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test7 += (test7 / 1000);
+    test7 += (test / 1000);
 
     //test8 (incorrect, index 14 of 28)
     password = "shannon_passwozzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test8 += (test8 / 1000);
+    test8 += (test / 1000);
 
     //test9 (incorrect, index 12 of 28)
     password = "shannon_passzzzzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test9 += (test9 / 1000);
+    test9 += (test / 1000);
 
     //test10 (incorrect, index 10 of 28)
     password = "shannon_pazzzzzzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test10 += (test10 / 1000);
+    test10 += (test / 1000);
 
     //test11 (incorrect, index 8 of 28)
     password = "shannon_zzzzzzzzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test11 += (test11 / 1000);
+    test11 += (test / 1000);
 
     //test12 (incorrect, index 6 of 28)
     password = "shannozzzzzzzzzzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test12 += (test12 / 1000);
+    test12 += (test / 1000);
 
     //test13 (incorrect, index 4 of 28)
     password = "shanzzzzzzzzzzzzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test13 += (test13 / 1000);
+    test13 += (test / 1000);
 
     //test14 (incorrect, index 2 of 28)
     password = "shzzzzzzzzzzzzzzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test14 += (test14 / 1000);
+    test14 += (test / 1000);
 
     //test15 (incorrect, index 0 of 28)
     password = "zzzzzzzzzzzzzzzzzzzzzzzzzzzz";
     test = test_creds(username, password, strlen(username), strlen(password), sock);
     if (test == -1) exit(EXIT_FAILURE);
-    test15 += (test15 / 1000);
+    test15 += (test / 1000);
   }
 
   test1 = test1 / NUM_ITERS;
@@ -211,21 +211,21 @@ int main(int argc, char const *argv[]) {
   test13 = test13 / NUM_ITERS;
   test14 = test14 / NUM_ITERS;
   test15 = test15 / NUM_ITERS;
-  printf("test1 (correct): %lf\n", test1);
-  printf("test2 (incorrect, index 26 of 28) average time (ms): %lf\n", test2);
-  printf("test3 (incorrect, index 24 of 28) average time (ms): %lf\n", test3);
-  printf("test4 (incorrect, index 22 of 28) average time (ms): %lf\n", test4);
-  printf("test5 (incorrect, index 20 of 28) average time (ms): %lf\n", test5);
-  printf("test6 (incorrect, index 18 of 28) average time (ms): %lf\n", test6);
-  printf("test7 (incorrect, index 16 of 28) average time (ms): %lf\n", test7);
-  printf("test8 (incorrect, index 14 of 28) average time (ms): %lf\n", test8);
-  printf("test9 (incorrect, index 12 of 28) average time (ms): %lf\n", test9);
-  printf("test10 (incorrect, index 10 of 28) average time (ms): %lf\n", test10);
-  printf("test11 (incorrect, index 8 of 28) average time (ms): %lf\n", test11);
-  printf("test12 (incorrect, index 6 of 28) average time (ms): %lf\n", test12);
-  printf("test13 (incorrect, index 4 of 28) average time (ms): %lf\n", test13);
-  printf("test14 (incorrect, index 2 of 28) average time (ms): %lf\n", test14);
-  printf("test15 (incorrect, index 0 of 28) average time (ms): %lf\n", test15);
+  printf("test1 (correct) average time (us): %lf\n", test1);
+  printf("test2 (incorrect, index 26 of 28) average time (us): %lf\n", test2);
+  printf("test3 (incorrect, index 24 of 28) average time (us): %lf\n", test3);
+  printf("test4 (incorrect, index 22 of 28) average time (us): %lf\n", test4);
+  printf("test5 (incorrect, index 20 of 28) average time (us): %lf\n", test5);
+  printf("test6 (incorrect, index 18 of 28) average time (us): %lf\n", test6);
+  printf("test7 (incorrect, index 16 of 28) average time (us): %lf\n", test7);
+  printf("test8 (incorrect, index 14 of 28) average time (us): %lf\n", test8);
+  printf("test9 (incorrect, index 12 of 28) average time (us): %lf\n", test9);
+  printf("test10 (incorrect, index 10 of 28) average time (us): %lf\n", test10);
+  printf("test11 (incorrect, index 8 of 28) average time (us): %lf\n", test11);
+  printf("test12 (incorrect, index 6 of 28) average time (us): %lf\n", test12);
+  printf("test13 (incorrect, index 4 of 28) average time (us): %lf\n", test13);
+  printf("test14 (incorrect, index 2 of 28) average time (us): %lf\n", test14);
+  printf("test15 (incorrect, index 0 of 28) average time (us): %lf\n", test15);
 
   close(sock);
   return 0;
