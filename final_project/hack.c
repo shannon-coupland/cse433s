@@ -28,6 +28,7 @@ char CHARS[NUM_CHARS] = {'a','b','c','d','e','f','g','h','i',
                          'T','U','V','W','X','Y','Z','0','1',
                          '2','3','4','5','6','7','8','9','!',
                          '@','_'};
+#define USERNAME "jason" //change this to whoever you'd like to hack
 
 #define SUCCESS "Successfully logged in!" //server's success message
 
@@ -159,7 +160,7 @@ int main(int argc, char const* argv[]) {
     printf("connected\n");
 
     //run attack and print result
-    char* password = perform_attack(sock, "jason", TIME_DIFFERENCE);
+    char* password = perform_attack(sock, USERNAME, TIME_DIFFERENCE);
     printf("Password for jason is %s. HACKED!\n", password);
     free(password);
 
