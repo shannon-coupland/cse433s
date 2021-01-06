@@ -1,19 +1,14 @@
 #!/bin/bash
 
+gcc server.c -o server
 gcc threshold.c -o threshold
 gcc hack.c -o hack
 
 ./server &
 echo "about to run threshold"
 ./threshold
-#thresh=$(./threshold)
-#echo $?
-
 thresh=$?
+
 ./server &
-
-#threshold_int=${threshold%.*}
-
-#echo "about to run hack"
 ./hack $thresh
 

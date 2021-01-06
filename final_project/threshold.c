@@ -11,23 +11,18 @@
 #define BUF_SIZE 256
 #define PORT 39393
 
-//add your own ip here if you'd like to test!
-#define jason_ip "192.168.0.190"
-#define shan_ip "192.168.1.46"
-#define shan_linux_ip "128.252.167.161"
-#define shan_lab_ip "192.168.122.1"
-char* ip = shan_lab_ip; //change this to your Linux lab IP address
+char* ip = "192.168.122.1"; //TODO change this to your Linux lab IP address
 
 //known username and password of the hacker
 char* USERNAME = "shan";
 char* PASSWORD = "shannon_password_super_secret";
 
-#define NUM_ITERS 1000
+#define NUM_ITERS 100 //number of iterations per submitted password to be averaged
 #define BUFFER_PERCENT 0.8 //lowers threshold a bit to make hack a little faster
 #define MIN_THRESHOLD_PERCENT 0.75 //rules out outliers when calculating min threshold
 
-struct timespec req_before, req_after;
-const int max_expected_args = 2;
+struct timespec req_before, req_after; //structs to hold timing information 
+const int num_expected_args = 1;
 
 
 //tests validity of username (user) and password (pass) pair
@@ -70,19 +65,25 @@ double test_creds(char* user, char* pass, int username_size, int password_size, 
 }
 
 int main(int argc, char const* argv[]) {
-    if (argc > max_expected_args || argc < 1) {
+
+    if (argc != num_expected_args) {
         printf("usage: ./threshold\n");
         exit(EXIT_FAILURE);
     }
 
+    printf("\nRunning threshold.c.../n");
+
+    // Declare socket variables
     int sock = 0;
     struct sockaddr_in serv_addr;
 
+    // Create socket
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("error creating socket\n");
         exit(EXIT_FAILURE);
     }
 
+    // Set socket to INET and set port
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
 
@@ -91,12 +92,13 @@ int main(int argc, char const* argv[]) {
 	    exit(EXIT_FAILURE);
     }
 
+    // Wait for connection
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         perror("failed to connect\n");
 	    exit(EXIT_FAILURE);
     }
 
-    printf("connected\n");
+    printf("Connected to server.\n");
 
     int NUM_TESTS = strlen(PASSWORD);
     double test;
@@ -118,10 +120,10 @@ int main(int argc, char const* argv[]) {
             //printf("test = %lf\n", test);
             
             if (test == -1) exit(EXIT_FAILURE);
-            tests[i] += test / 1000;
+            tests[i] += test;
         }
 
-        tests[i] *= 1000 / NUM_ITERS;
+        tests[i] /= NUM_ITERS;
     }
 
     //calculate average threshold
@@ -132,17 +134,15 @@ int main(int argc, char const* argv[]) {
     double diff;
     for (int i = 0; i < NUM_TESTS - 1; i++) {
         diff = tests[i+1] - tests[i];
-        printf("diff is %lf - %lf = %lf\n", tests[i+1], tests[i], diff);
         //last condition below rules out possible outliers
         if (threshold == 0 || diff < threshold && diff > MIN_THRESHOLD_PERCENT * avg) {
             threshold = diff;
-            printf("threshold is now %lf\n", threshold);
         }
     }
     threshold *= BUFFER_PERCENT; //a lowered threshold makes the hack easier
 
     close(sock);
 
-    printf("Threshold is %lf\n", threshold);
+    printf("%lf us is the threshold to detect that the server has processed an additional password character.\n", threshold);
     return threshold;
 }

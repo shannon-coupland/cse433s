@@ -16,9 +16,9 @@
 #define shan_ip "192.168.1.46"
 #define shan_linux_ip "128.252.167.161"
 #define shan_lab_ip "192.168.122.1"
-char* ip = shan_lab_ip; //change this to your ip
+char* ip = shan_linux_ip; //change this to your ip
 
-#define NUM_ITERS 200
+#define NUM_ITERS 100
 #define NUM_CHARS 65
 char CHARS[NUM_CHARS] = {'a','b','c','d','e','f','g','h','i',
                          'j','k','l','m','n','o','p','q','r',
