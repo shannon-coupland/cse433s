@@ -24,6 +24,7 @@ char* PASSWORD = "shannon_password_super_secret";
 
 #define NUM_ITERS 1000
 #define BUFFER_PERCENT 0.8 //lowers threshold a bit to make hack a little faster
+#define MIN_THRESHOLD_PERCENT 0.75 //rules out outliers when calculating min threshold
 
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
@@ -123,13 +124,17 @@ int main(int argc, char const* argv[]) {
         tests[i] *= 1000 / NUM_ITERS;
     }
 
+    //calculate average threshold
+    double avg = (tests[NUM_TESTS - 1] - tests[0]) / (NUM_TESTS - 1);
+
     //calculate threshold by taking the minimum difference in average times
     double threshold = 0;
     double diff;
     for (int i = 0; i < NUM_TESTS - 1; i++) {
         diff = tests[i+1] - tests[i];
         printf("diff is %lf - %lf = %lf\n", tests[i+1], tests[i], diff);
-        if (threshold == 0 || diff < threshold) {
+        //last condition below rules out possible outliers
+        if (threshold == 0 || diff < threshold && diff > MIN_THRESHOLD_PERCENT * avg) {
             threshold = diff;
             printf("threshold is now %lf\n", threshold);
         }
