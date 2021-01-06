@@ -13,64 +13,64 @@
 
 #define BUF_SIZE 256
 #define PORT 39393
+
+//add your own ip here if you'd like to test!
 #define jason_ip "192.168.122.1"
 #define shan_ip "192.168.1.46"
 #define shan_linux_ip "128.252.167.161"
 #define shan_lab_ip "192.168.122.1"
-
-char* ip = jason_ip;
+char* ip = jason_ip; //change this to your ip
 
 #define NUM_ITERS 50
 #define NUM_CHARS 27
-
-// add A-Z, 0-9, !, @, *
 char CHARS[NUM_CHARS] = {'a','b','c','d','e','f','g','h','i',
                          'j','k','l','m','n','o','p','q','r',
                          's','t','u','v','w','x','y','z','_'};
-#define TIME_DIFFERENCE 50
 
 struct timespec req_before, req_after;
 const int max_expected_args = 2;
 
+
+//tests validity of username (user) and password (pass) pair
+//sends these to server and checks response
+//returns -1 if read from server fails
+//otherwise, returns time it takes for password to be verified by server
 double test_creds(char* user, char* pass, int username_size, int password_size, int socket) {
-  //printf("entered test_creds\n");
-  int result;
-  char response[BUF_SIZE];
+    //send username
+    int result;
+    char response[BUF_SIZE];
+    send(socket, user, username_size, 0);
 
-  //send username
-  send(socket, user, username_size, 0);
+    //wait for server before sending password
+    if ((result = read(socket, response, sizeof(response))) == -1) {
+        perror("read failed");
+        return -1;
+    } else if (result == 0) {
+        perror("server closed");
+        return -1;
+    }
 
-  //wait for server before sending password
-  if ((result = read(socket, response, sizeof(response))) == -1) {
-    perror("read failed");
-    return -1;
-  } else if (result == 0) {
-    perror("server closed");
-    return -1;
-  }
-  //printf("%s\n", response);
+    //send password
+    send(socket, pass, password_size, 0);
+    clock_gettime(CLOCK_MONOTONIC, &req_before); //record time before
+    result = read(socket, response, sizeof(response));
+    clock_gettime(CLOCK_MONOTONIC, &req_after); //record time after
 
-  //send password
-  send(socket, pass, password_size, 0);
-  clock_gettime(CLOCK_MONOTONIC, &req_before); //record time before
-  result = read(socket, response, sizeof(response));
-  clock_gettime(CLOCK_MONOTONIC, &req_after); //record time after
+    if (result == -1) {
+        perror("read failed");
+        return -1;
+    } else if (result == 0) {
+        perror("server closed");
+        return -1;
+    }
+    //printf("%s\n", response);
 
-  if (result == -1) {
-    perror("read failed");
-    return -1;
-  } else if (result == 0) {
-    perror("server closed");
-    return -1;
-  }
-  //printf("%s\n", response);
+    double ret = req_after.tv_nsec - req_before.tv_nsec;
+    if (ret < 0) {
+      ret += 1000000000;
+    }
 
-  double ret = req_after.tv_nsec - req_before.tv_nsec;
-  if (ret < 0) {
-    ret += 1000000000;
-  }
-
-  return ret / 1000;
+    return ret / 1000;
 }
 
 
