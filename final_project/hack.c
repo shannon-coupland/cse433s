@@ -11,12 +11,7 @@
 #define BUF_SIZE 256
 #define PORT 39393
 
-//add your own ip here if you'd like to test!
-#define jason_ip "192.168.0.190"
-#define shan_ip "192.168.1.46"
-#define shan_linux_ip "128.252.167.161"
-#define shan_lab_ip "192.168.122.1"
-char* ip = shan_linux_ip; //change this to your ip
+char* ip = "192.168.122.1"; //TODO change this to your Linux lab ip
 
 #define NUM_ITERS 100
 #define NUM_CHARS 65
@@ -28,11 +23,12 @@ char CHARS[NUM_CHARS] = {'a','b','c','d','e','f','g','h','i',
                          'T','U','V','W','X','Y','Z','0','1',
                          '2','3','4','5','6','7','8','9','!',
                          '@','_'};
+
 #define USERNAME "jason" //change this to whoever you'd like to hack
 
 #define SUCCESS "Successfully logged in!" //server's success message
 
-struct timespec req_before, req_after;
+struct timespec req_before, req_after; //used to time server response to password
 const int num_expected_args = 2;
 
 
@@ -135,15 +131,20 @@ int main(int argc, char const* argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    printf("\nRunning hack.c...\n");
+
+    //declare variables for time difference (from args) and socket
     int TIME_DIFFERENCE = atoi(argv[1]);
     int sock = 0;
     struct sockaddr_in serv_addr;
 
+    //create socket
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Error creating socket");
         exit(EXIT_FAILURE);
     }
 
+    //set socket to INET
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
 
@@ -152,18 +153,22 @@ int main(int argc, char const* argv[]) {
 	    exit(EXIT_FAILURE);
     }
 
+    //connect to socket
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         perror("Failed to connect");
 	    exit(EXIT_FAILURE);
     }
 
-    printf("connected\n");
+    printf("Connected to server.\n");
 
     //run attack and print result
     char* password = perform_attack(sock, USERNAME, TIME_DIFFERENCE);
-    printf("Password for jason is %s. HACKED!\n", password);
+    printf("\nPassword for jason is %s. HACKED!\n\n", password);
+
+    //free result of perform_attack call, which was dynamically allocated within perform_attack
     free(password);
 
+    //close connection and return
     close(sock);
     return 0;
 }

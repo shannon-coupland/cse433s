@@ -71,7 +71,7 @@ int main(int argc, char const* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("\nRunning threshold.c.../n");
+    printf("\nRunning threshold.c...\n");
 
     // Declare socket variables
     int sock = 0;
@@ -111,13 +111,12 @@ int main(int argc, char const* argv[]) {
         //copy first i+1 characters into guess, then insert incorrect character
         strncpy(guess, PASSWORD, i+1);
         guess[i+1] = '\0';
-        printf("guessing password %s\n", guess);
+        printf("getting timing from password %s\n", guess);
         tests[i] = 0;
 
         //average NUM_ITERS test results on this guess
         for (int j = 0; j < NUM_ITERS; j++) {
             test = test_creds(USERNAME, guess, strlen(USERNAME), strlen(guess), sock);
-            //printf("test = %lf\n", test);
             
             if (test == -1) exit(EXIT_FAILURE);
             tests[i] += test;
@@ -141,8 +140,11 @@ int main(int argc, char const* argv[]) {
     }
     threshold *= BUFFER_PERCENT; //a lowered threshold makes the hack easier
 
-    close(sock);
+    //print results
+    printf("Threshold is %lf microseconds.\n", threshold);
+    printf("This is the amount of time used to detect that the server has processed an additional password character.\n");
 
-    printf("%lf us is the threshold to detect that the server has processed an additional password character.\n", threshold);
+    //close connection and return threshold
+    close(sock);
     return threshold;
 }

@@ -1,14 +1,20 @@
 #!/bin/bash
 
+# Compile C programs
 gcc server.c -o server
 gcc threshold.c -o threshold
 gcc hack.c -o hack
 
+# Run server in the background
 ./server &
-echo "about to run threshold"
+
+# Run threshold and store result
 ./threshold
 thresh=$?
 
+# Run server in the background
 ./server &
+
+# Run hack with result of threshold as command line argument
 ./hack $thresh
 

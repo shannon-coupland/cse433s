@@ -57,38 +57,44 @@ int check_creds(int user_index, char* password, int socket) {
 }
 
 int main(int argc, char const* argv[]) {
+    //define variables
     char* current_user;
     int server_fd, new_socket;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
 
-    // Creating socket file descriptor
+    printf("\nRunning server...\n");
+
+    //create socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket creation failed\n");
         exit(EXIT_FAILURE);
     }
 
+    //set socket to INET and set port
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
+    //bind address to socket file descriptor
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed\n");
         exit(EXIT_FAILURE);
     }
 
+    //listen for new socket connections
     if (listen(server_fd, 3) < 0) {
         perror("listen failed\n");
         exit(EXIT_FAILURE);
     }
 
+    //accept a new socket connection and set its file descriptor
     if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
         perror("accept failed\n");
   	    exit(EXIT_FAILURE);
-    } else {
-        printf("new connection to socket\n");
     }
 
+    //declare variables for authenticating users
     int user_index, found, result;
     char username[BUF_SIZE];
     char password[BUF_SIZE];
@@ -104,7 +110,6 @@ int main(int argc, char const* argv[]) {
             exit(EXIT_FAILURE);
         }
         if (result == 0) {
-            printf("client closed; closing server\n");
             exit(EXIT_SUCCESS);
         }
 
@@ -135,7 +140,6 @@ int main(int argc, char const* argv[]) {
             exit(EXIT_FAILURE);
         }
         if (result == 0) {
-            printf("Client closed; closing server.\n");
             exit(EXIT_SUCCESS);
         }
 
